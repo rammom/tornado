@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title><%= goal.title %></title>
+        <%- include('../partials/imports')%>
+    </head>
+    <body>
+        <%- include('../partials/nav') %>
+        <div class="container">
+             <h1><%= goal.title %> <% if (goal.private){%> (private) <%}%> </h1>
+            <h3><%= goal.info %></h3>
+            <% if (goal.subgoals.length > 0) {%>
+                <h2> Subgoals </h2>
+                <% goal.subgoals.forEach(function(subgoal){%>
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title"><%= subgoal.title %></h5>
+                            <form action="/api/goal/subgoal/toggleCompletion" method="POST">
+                                <input type="text" value="<%= goal._id %>" name="goal" style="visibility: hidden;">
+                                <input type="text" value="<%= subgoal._id %>" name="subgoal" style="visibility: hidden;">                            
+                                <% if (subgoal.completed) { %>
+                                    <input type="text" value="<%= false %>" name="complete" style="visibility: hidden;">                                                        
+                                    <button type="submit" class="btn btn-danger" style="float: right">Undo Completion</button>
+                                <% } else {%>
+                                    <input type="text" value="<%= true %>" name="complete" style="visibility: hidden;">                                
+                                    <button type="submit" class="btn btn-primary" style="float: right">Completed</button> 
+                                <% } %>
+                            </form>
+
+                        </div>
+                    </div>
+                    <br>
+                <% }); %>
+            <%}%>
+        </div>
+       
+    </body>
+</html>
+
+<script>
+        var toggleCompletion = function(goalId, subgoalId){
+            $.post('/api/goal/subgoal/toggleCompletion', {goal: goalId, subgoal: subgoalId});
+        }
+</script>

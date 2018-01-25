@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>New Goal</title>
+        <%- include('../partials/imports')%>
+    </head>
+
+    <body>
+        <%- include('../partials/nav') %>
+            
+        <% if(errors) {%>
+            <% errors.forEach(function(err){%>
+                <p style="color: red">***
+                    <%= err.msg %>
+                </p>
+            <%})%>
+        <% }%>
+
+        <h1>Add a New Goal</h1>
+        <form action="/api/goal/add-new" method="POST">
+            <div>
+                <label for="title">Goal Title: </label>
+                <input type="text" name="title" id="title" required>
+            </div>
+            <div>
+                <label for="info">Goal Info: </label>
+                <textarea type="text" name="info" id="info" required></textarea>
+            </div>
+            <div>
+                <label for="private">Private: </label>
+                <input type="checkbox" name="private" id="private">
+            </div>
+            <!-- <div>
+                <label for="entry_fee">Entry fee: </label>
+                <input type="text" name="entry_fee" id="entry_fee">
+                <small>leave blank if no fee</small>
+            </div> -->
+            <br>
+            <br>
+            <!-- subgoals -->
+            <div id="subgoals">
+
+            </div>
+
+            <button id="add-subgoal" type="button">Add subgoal</button>
+            <button id="del-subgoal" type="button">Delete subgoal</button>            
+            <br>
+            <br>
+            <button type="submit">Create Goal</button>
+        </form>
+
+    </body>
+
+</html>
+
+<script>
+    $(document).ready(function(){
+        let subgoalCount = 0;
+
+        $("#del-subgoal").on("click", function () {
+            if (subgoalCount > 0){
+                $("#subgoal" + subgoalCount).remove();
+                subgoalCount--;
+            }
+        });
+
+        $("#add-subgoal").on("click", function(){
+            subgoalCount++;            
+            $("div#subgoals").append(
+                "<div id='subgoal"+subgoalCount+"'>"+
+                    "<h4>Subgoal "+subgoalCount+"</h4>"+
+                    "<label for='subgoal-title"+subgoalCount+"'> title: </label>"+
+                    "<input type='text' name='subgoals' id='subgoal-title"+subgoalCount+"' required><br>"+
+                    "<label for='subgoal-consequence" + subgoalCount + "'> consequence: </label>" +
+                    "<input type='text' name='subgoals' id='subgoal-consequence" + subgoalCount + "'>" +
+                    "<small> leave blank if no consequence </small>"+
+                "</div>"
+            );
+        });
+
+
+
+    });
+</script>

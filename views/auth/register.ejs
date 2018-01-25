@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>Tornado</title>
+        <%- include('../partials/imports')%>
+    </head>
+
+    <body>
+
+        <% if(errors) {%>
+            <% errors.forEach(function(err){%>
+                <p style="color: red">***<%= err.msg %></p>
+            <%})%>
+        <% }%>
+
+        <h1>REGISTER</h1>
+        <form action="/auth/register" method="POST">
+            <div>
+                <label for="firstname">firstname: </label>
+                <input type="text" id="firstname" name="firstname" required>
+            </div>
+            <br>
+            <div>
+                <label for="lastname">lastname: </label>
+                <input type="text" id="lastname" name="lastname" required>
+            </div>
+            <br>
+            <div>
+                <label for="email">email: </label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <br>
+            <div>
+                <label for="password">password: </label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <br>
+            <div>
+                <label for="password_verify">confirm password: </label>
+                <input type="password" id="password_verify" name="password_verify" required>
+            </div>
+            <br>
+            <button type="submit">register</button>
+        </form>
+
+    </body>
+
+</html>

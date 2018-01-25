@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Dashboard</title>
+		<%- include('../partials/imports')%>
+	</head>
+	<body>
+
+		<%- include('../partials/nav') %>
+
+		<div class="dev_contain">
+			<%try{%>
+				<% if(ping){ %>
+					<div class="alert alert-success" role="alert">
+						<%=ping%>
+					</div>
+				<%}%>
+			<%} catch(e){} %>
+		</div>
+
+		<div class="row dev_contain">
+			
+			<!-- friends -->
+			<div class="col-sm-12 col-md-3" style="overflow: scroll; height: 100%">
+				<h2>Your Friends</h2>
+				<% if (user.requests.length > 0){ %>
+					new friend requests!
+					<ul class="list-group">
+						<% user.requests.forEach(function(request){ %>
+							<li class="list-group-item">
+								<%=request.firstname + " " + request.lastname%> 
+								<span style="float: right;">
+									<form action="/api/user/accept-friend-request" method="POST">
+										<input type="text" value="<%= request._id %>" name="friendId" style="visibility: hidden">
+										<button type="submit">Accept</button>
+									</form>
+									<form action="/api/user/decline-friend-request" method="POST">
+										<input type="text" value="<%= request._id %>" name="friendId" style="visibility: hidden">
+										<button type="submit">Decline</button>
+									</form>
+								</span>
+							</li>
+						<%})%>
+					</ul>
+				<%}%>
+				current friends
+				<ul class="list-group">
+					<% user.friends.forEach(function(friend){ %>
+						<li class="list-group-item">
+							<%=friend.firstname + " " + friend.lastname%>
+						</li>
+					<%})%>
+				</ul>
+			</div>
+
+			<!-- goals -->
+			<div class="col-sm-12 col-md-9">
+				<h2>Your Goals <a class="btn btn-primary" href="/nado/new-goal" style="float: right;">+</a></h2>
+				<% user.goals.forEach(function(goal){%>
+					<div class="card" style="margin-top: 1vh;">
+						<div class="card-header">
+							<%= goal.title %>
+						</div>
+						<div class="card-body">
+							<p class="card-text"><%= goal.info %></p>
+							<div class="progress">
+								<div class="progress-bar" role="progressbar" style="width: <%= goal.completedSubgoals / goal.subgoalCount * 100 %>%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+							</div>
+							<%= (goal.subgoalCount != 0) ? Math.round(goal.completedSubgoals / goal.subgoalCount * 100) : 0%>% Done
+							
+							<br>
+							<form action="/api/user/remove-goal<%= goal._id %>" method="POST">
+								<button type="submit" class="btn btn-danger" style="float: right; color: white;">Delete Goal</button>
+							</form>
+							<a href="/nado/edit-goal/<%= goal._id %>" class="btn btn-primary" style="float: right; margin-right: 10px;">Edit Goal</a>
+							<a href="/nado/goal/<%= goal._id %>" class="btn btn-primary" style="float: right; margin-right: 10px;">View More</a>							
+						</div>
+					</div>
+				<%})%>
+			</div>
+		</div>
+        
+	</body>
+</html>
+
+<script>
+	$(document).ready(function(){
+
+	});
+</script>

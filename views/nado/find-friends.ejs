@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Page Title</title>
+        <%- include('../partials/imports') %>
+    </head>
+    <body>
+        <%- include('../partials/nav') %>
+        <div class="container">
+            <% if (noUsers){%>
+                No users found
+            <%} else {%>
+                <ul class="list-group">
+                <% users.forEach(function(user){%>
+                    <% if (user.addable){ %>
+                        <li class="list-group-item">
+                            <%= user.firstname + " " + user.lastname%>
+                            <% if (!user.sentRequest) {%>
+                                <form action="/api/user/send-friend-request" method="POST">
+                                    <input type="text" value="<%=user._id%>" name="friendId" style="visibility: hidden;">
+                                    <button href="" class="btn btn-primary" style="float: right;">Send friend request</button>
+                                </form>
+                            <%} else {%>
+                                <form action="/api/user/undo-friend-request" method="POST">
+                                    <input type="text" value="<%=user._id%>" name="friendId" style="visibility: hidden;">
+                                    <button href="" class="btn btn-danger" style="float: right;">Undo friend request</button>
+                                </form>
+                            <%}%>
+                        </li>
+                        <br>
+                    <%}%>
+               <%});%>
+                </ul>
+            <%}%>
+        </div>
+    </body>
+</html>
