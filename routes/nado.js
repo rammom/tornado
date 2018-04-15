@@ -20,7 +20,7 @@ router.get('/dashboard', function(req, res, next){
 
     User.findOne({_id: req.session.user._id})
         .populate('goals')
-        .populate('requests')
+        .populate('requests.user')
         .populate('friends')
         .exec(function(err, user){
             if (err){
@@ -57,7 +57,23 @@ router.get('/dashboard', function(req, res, next){
 });
 
 router.get('/new-goal', function(req, res, next) {
-    res.render("nado/new-goal", {user: req.session.user, errors: null});
+    User.findOne(req.session.user._id)
+        .populate('requests.user')
+        .exec(function(err, user){
+            if (err){
+                res.status(500).json({
+                    title: "Error while finding authenticated user",
+                    err: err
+                });
+            }
+            if (!user){
+                res.status(500).json({
+                    title: "Can't find authenticated user",
+                    err: err
+                });
+            }
+            res.render("nado/new-goal", { user: user, errors: null });            
+        });
 });
 router.get('/edit-goal/:GID', function(req, res, next){
     
@@ -73,8 +89,23 @@ router.get('/edit-goal/:GID', function(req, res, next){
                 title: "Can't find specified user"
             });
         }
-        console.log(goal);
-        res.render('nado/edit-goal', {user: req.session.user, goal: goal, errors: null});
+        User.findOne(req.session.user._id)
+            .populate('requests.user')
+            .exec(function (err, user) {
+                if (err) {
+                    res.status(500).json({
+                        title: "Error while finding authenticated user",
+                        err: err
+                    });
+                }
+                if (!user) {
+                    res.status(500).json({
+                        title: "Can't find authenticated user",
+                        err: err
+                    });
+                }
+                res.render('nado/edit-goal', { user: user, goal: goal, errors: null });
+            });
     });
 
 });
@@ -101,7 +132,23 @@ router.get('/goal/:GID', function(req, res, next){
             else
                 subgoal.completed = false;
         });
-        res.render('nado/view-goal', {user: req.session.user, goal: goal});
+        User.findOne(req.session.user._id)
+            .populate('requests.user')
+            .exec(function (err, user) {
+                if (err) {
+                    res.status(500).json({
+                        title: "Error while finding authenticated user",
+                        err: err
+                    });
+                }
+                if (!user) {
+                    res.status(500).json({
+                        title: "Can't find authenticated user",
+                        err: err
+                    });
+                }
+                res.render('nado/view-goal', { user: user, goal: goal });                
+            });
     });
 });
 
@@ -141,7 +188,23 @@ router.post('/find-friend', function (req, res, next) {
         let noUsers = false;
         if (count == users.length)
             noUsers = true;
-        res.render('nado/find-friends', { users: users, user: req.session.user, noUsers: noUsers });
+        User.findOne(req.session.user._id)
+            .populate('requests.user')
+            .exec(function (err, user) {
+                if (err) {
+                    res.status(500).json({
+                        title: "Error while finding authenticated user",
+                        err: err
+                    });
+                }
+                if (!user) {
+                    res.status(500).json({
+                        title: "Can't find authenticated user",
+                        err: err
+                    });
+                }
+                res.render('nado/find-friends', { users: users, user: user, noUsers: noUsers });                
+            });
     });
 });
 
@@ -165,7 +228,7 @@ router.get('/share-goal/:GID', function(req, res, next){
 
         User.findOne({_id: req.session.user._id})
             .populate('friends')
-            .populate('requests')            
+            .populate('requests.user')            
             .exec(function(err, user){
                 if (err) {
                     res.status(404).json({

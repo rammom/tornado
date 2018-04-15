@@ -19,13 +19,13 @@
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                     <% user.requests.forEach(function(request){ %>
                         <div class="dropdown-item disabled">
-                            <i class="fas fa-user-plus"> </i> Friend request from <%= request.firstname %> <%= request.lastname %>
+                            <i class="fas fa-user-plus"> </i> Friend request from <%= request.user.firstname %> <%= request.user.lastname %>!
                             <form action="/api/user/accept-friend-request" method="POST" style="display: inline;">
-                                <input type="text" value="<%= request._id %>" name="friendId" style="visibility: hidden; width:0px">
+                                <input type="text" value="<%= request.user._id %>" name="friendId" style="visibility: hidden; width:0px">
                                 <button type="submit" class="btn btn-success m_btn">Accept</button>
                             </form>
                             <form action="/api/user/decline-friend-request" method="POST" style="display: inline;">
-                                <input type="text" value="<%= request._id %>" name="friendId" style="visibility: hidden; width:0px">
+                                <input type="text" value="<%= request.user._id %>" name="friendId" style="visibility: hidden; width:0px">
                                 <button type="submit" class="btn btn-danger m_btn">Decline</button>
                             </form>
                         </div>

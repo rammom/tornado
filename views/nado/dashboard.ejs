@@ -23,7 +23,6 @@
 			<!-- friends -->
 			<div class="col-sm-12 col-md-3" style="overflow: scroll; height: 100%">
 				<h2>Your Friends</h2>
-				current friends
 				<ul class="list-group">
 					<% user.friends.forEach(function(friend){ %>
 						<li class="list-group-item">
@@ -48,7 +47,6 @@
 								<div class="progress-bar" role="progressbar" style="width: <%= goal.completedSubgoals / goal.subgoalCount * 100 %>%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
 							</div>
 							<%= (goal.subgoalCount != 0) ? Math.round(goal.completedSubgoals / goal.subgoalCount * 100) : 0%>% Done
-							
 							<br>
 							<form action="/api/user/remove-goal<%= goal._id %>" method="POST">
 								<button type="submit" class="btn btn-danger" style="float: right; color: white;">Delete Goal</button>

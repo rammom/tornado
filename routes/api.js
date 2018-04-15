@@ -271,12 +271,18 @@ router.post('/user/send-friend-request', function(req, res, next){
                 title: "user not found"
             });
         }
-        if (friend.requests.indexOf(req.session.user._id) != -1){
-            return res.status(500).json({
-                title: "friend request already sent!"
-            });
+        friend.requests.forEach(function(request){
+            if (request.user == req.session.user._id){
+                return res.status(500).json({
+                    title: "friend request already sent!"
+                });
+            }
+        });
+        var newRequest = {
+            user: req.session.user._id,
+            type: "friend"
         }
-        friend.requests.push(req.session.user._id);
+        friend.requests.push(newRequest);
         friend.save(function(err){
             if (err){
                 return res.status(500).json({
@@ -303,8 +309,16 @@ router.post('/user/undo-friend-request', function(req, res, next){
                 title: "Can't find user"
             });
         }
-        let index = friend.requests.indexOf(req.session.user._id);
-        if (index == -1){
+        let index = 0;
+        let userFound = false;
+        friend.requests.forEach(function (request) {
+            if (request.user == req.session.user._id) {
+                userFound = true;
+                return;
+            }
+            index++;
+        });
+        if (!userFound){
             return randomBytes.status(500).json({
                 title: "No friend request was previously sent!"
             });
@@ -324,7 +338,9 @@ router.post('/user/undo-friend-request', function(req, res, next){
 
 /** accept a current friend request */
 router.post('/user/accept-friend-request', function(req, res, next){
+    console.log(req.body.friendId);
     User.findById(req.body.friendId, function(err, friend){
+        console.log(friend);
         if (err){
             return res.status(500).json({
                 title: "error while finding user",
@@ -349,7 +365,12 @@ router.post('/user/accept-friend-request', function(req, res, next){
                 });
             }
             user.friends.push(friend._id);
-            user.requests.splice(req.session.user.requests.indexOf(friend._id));
+            for (var i = 0; i < user.requests.length; i++){
+                if (user.requests[i].user == req.session.user._id){
+                    user.requests.splice(i);
+                    break;
+                }
+            }
             user.save(function(err){
                 if (err){
                     return res.status(500).json({
@@ -375,7 +396,28 @@ router.post('/user/accept-friend-request', function(req, res, next){
 
 /** decline a friend request */
 router.post('/user/decline-friend-request', function(req, res, next){
-
+    User.findById(req.session.user._id, function (err, user) {
+        if (err) {
+            return res.status(500).json({
+                title: "error while updating session user",
+                err: err
+            });
+        }
+        for (var i = 0; i < user.requests.length(); i++) {
+            if (user.requests[i].user == req.session.user._id) {
+                user.requests.splice(i);
+                break;
+            }
+        }
+        user.save(function (err) {
+            if (err) {
+                return res.status(500).json({
+                    title: "error while saving user",
+                    err: err
+                });
+            }
+        });
+    });
 });
 
 module.exports = router;
