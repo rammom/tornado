@@ -145,6 +145,46 @@ router.post('/find-friend', function (req, res, next) {
     });
 });
 
+router.get('/share-goal/:GID', function(req, res, next){
+    if (req.session.user.goals.indexOf(req.params.GID) == -1)
+        res.send("This isn't your goal! smh");
+
+    Goal.findById(req.params.GID, function(err, goal){
+        if (err){
+            res.status(404).json({
+                title: "error finding goal",
+                err: err
+            });
+        }
+        if (!goal){
+            res.status(404).json({
+                title: "No goal found!",
+                err: err
+            });
+        }
+
+        User.findOne({_id: req.session.user._id})
+            .populate('friends')
+            .populate('requests')            
+            .exec(function(err, user){
+                if (err) {
+                    res.status(404).json({
+                        title: "error finding authenticated user",
+                        err: err
+                    });
+                }
+                if (!user) {
+                    res.status(404).json({
+                        title: "Can't find authenticated user",
+                        err: err
+                    });
+                }
+                res.render('nado/share-goal', { user: user, goal: goal, errors: null });                
+            });
+
+    });
+});
+
 module.exports = router;
 
 

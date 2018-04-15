@@ -10,7 +10,7 @@ var session = require('express-session');
 var bcrypt = require("bcryptjs");
 mongoose.connect('mongodb://localhost:27017/goal');
 
-var config = require('config');
+var config = require('./config');
 
 var index = require('./routes/index');
 var auth = require('./routes/auth');

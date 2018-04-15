@@ -23,26 +23,6 @@
 			<!-- friends -->
 			<div class="col-sm-12 col-md-3" style="overflow: scroll; height: 100%">
 				<h2>Your Friends</h2>
-				<% if (user.requests.length > 0){ %>
-					new friend requests!
-					<ul class="list-group">
-						<% user.requests.forEach(function(request){ %>
-							<li class="list-group-item">
-								<%=request.firstname + " " + request.lastname%> 
-								<span style="float: right;">
-									<form action="/api/user/accept-friend-request" method="POST">
-										<input type="text" value="<%= request._id %>" name="friendId" style="visibility: hidden">
-										<button type="submit">Accept</button>
-									</form>
-									<form action="/api/user/decline-friend-request" method="POST">
-										<input type="text" value="<%= request._id %>" name="friendId" style="visibility: hidden">
-										<button type="submit">Decline</button>
-									</form>
-								</span>
-							</li>
-						<%})%>
-					</ul>
-				<%}%>
 				current friends
 				<ul class="list-group">
 					<% user.friends.forEach(function(friend){ %>
@@ -59,7 +39,8 @@
 				<% user.goals.forEach(function(goal){%>
 					<div class="card" style="margin-top: 1vh;">
 						<div class="card-header">
-							<%= goal.title %>
+							<h6 style="margin: 0px; display: inline;"><%= goal.title %></h6>
+							<a class="btn btn-warning share-btn" href="/nado/share-goal/<%= goal._id %>">Share</a>
 						</div>
 						<div class="card-body">
 							<p class="card-text"><%= goal.info %></p>
@@ -82,6 +63,13 @@
         
 	</body>
 </html>
+
+<style>
+	.share-btn {
+		padding: 1px 5px 1px 5px;
+		float: right;
+	}
+</style>
 
 <script>
 	$(document).ready(function(){

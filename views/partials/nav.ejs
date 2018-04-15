@@ -11,6 +11,27 @@
             <li class="nav-item">
                 <a class="nav-link" href="/auth/logout">logout</a>
             </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true"
+                    aria-expanded="false">
+                    <i class="far fa-bell"></i>                    
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <% user.requests.forEach(function(request){ %>
+                        <div class="dropdown-item disabled">
+                            <i class="fas fa-user-plus"> </i> Friend request from <%= request.firstname %> <%= request.lastname %>
+                            <form action="/api/user/accept-friend-request" method="POST" style="display: inline;">
+                                <input type="text" value="<%= request._id %>" name="friendId" style="visibility: hidden; width:0px">
+                                <button type="submit" class="btn btn-success m_btn">Accept</button>
+                            </form>
+                            <form action="/api/user/decline-friend-request" method="POST" style="display: inline;">
+                                <input type="text" value="<%= request._id %>" name="friendId" style="visibility: hidden; width:0px">
+                                <button type="submit" class="btn btn-danger m_btn">Decline</button>
+                            </form>
+                        </div>
+                    <% }); %>
+                </div>
+            </li>
         </ul>
         <form class="form-inline my-2 my-lg-0" action="/nado/find-friend" method="POST">
             <input class="form-control mr-sm-2" type="search" placeholder="Name" aria-label="Search" name="name">
@@ -26,3 +47,11 @@
         </div>
     </div>
 </nav> 
+
+<style>
+    .m_btn{
+        padding: 1px 3px 1px 3px;
+        margin-left: 5px;
+        color: white !important;
+    }
+</style>

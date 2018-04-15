@@ -12,6 +12,7 @@ var GoalSchema = new Schema({
      }],
     users: [{ type: ObjectId, ref:'User', required: true }],
     private: { type: Boolean, required: true },
+    sharedWith: [{ type: ObjectId, ref: 'User', required: true }],
     archived: { type: Boolean, required: true },
     complete: { type: Boolean, required: true },       
     entry_fee: { type: Number, required: true },
