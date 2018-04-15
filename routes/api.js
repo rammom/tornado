@@ -338,7 +338,6 @@ router.post('/user/undo-friend-request', function(req, res, next){
 
 /** accept a current friend request */
 router.post('/user/accept-friend-request', function(req, res, next){
-    console.log(req.body.friendId);
     User.findById(req.body.friendId, function(err, friend){
         console.log(friend);
         if (err){
@@ -366,8 +365,9 @@ router.post('/user/accept-friend-request', function(req, res, next){
             }
             user.friends.push(friend._id);
             for (var i = 0; i < user.requests.length; i++){
-                if (user.requests[i].user == req.session.user._id){
+                if (user.requests[i].user == req.body.friendId) {                
                     user.requests.splice(i);
+                    console.log(user);
                     break;
                 }
             }
@@ -403,9 +403,10 @@ router.post('/user/decline-friend-request', function(req, res, next){
                 err: err
             });
         }
-        for (var i = 0; i < user.requests.length(); i++) {
-            if (user.requests[i].user == req.session.user._id) {
+        for (var i = 0; i < user.requests.length; i++) {
+            if (user.requests[i].user == req.body.friendId) {
                 user.requests.splice(i);
+                console.log(user);                
                 break;
             }
         }
@@ -416,6 +417,7 @@ router.post('/user/decline-friend-request', function(req, res, next){
                     err: err
                 });
             }
+            res.redirect("back")
         });
     });
 });

@@ -57,7 +57,7 @@ router.get('/dashboard', function(req, res, next){
 });
 
 router.get('/new-goal', function(req, res, next) {
-    User.findOne(req.session.user._id)
+    User.findOne({ _id: req.session.user._id })
         .populate('requests.user')
         .exec(function(err, user){
             if (err){
@@ -89,7 +89,7 @@ router.get('/edit-goal/:GID', function(req, res, next){
                 title: "Can't find specified user"
             });
         }
-        User.findOne(req.session.user._id)
+        User.findOne({ _id: req.session.user._id })
             .populate('requests.user')
             .exec(function (err, user) {
                 if (err) {
@@ -132,7 +132,7 @@ router.get('/goal/:GID', function(req, res, next){
             else
                 subgoal.completed = false;
         });
-        User.findOne(req.session.user._id)
+        User.findOne({ _id: req.session.user._id })
             .populate('requests.user')
             .exec(function (err, user) {
                 if (err) {
@@ -164,7 +164,7 @@ router.post('/find-friend', function (req, res, next) {
     }
     User.find(query, function (err, users) {
         if (err) {
-            res.status(500).json({
+            return res.status(500).json({
                 title: "error while finding users",
                 err: err
             });
@@ -188,17 +188,17 @@ router.post('/find-friend', function (req, res, next) {
         let noUsers = false;
         if (count == users.length)
             noUsers = true;
-        User.findOne(req.session.user._id)
+        User.findOne({ _id: req.session.user._id })
             .populate('requests.user')
             .exec(function (err, user) {
                 if (err) {
-                    res.status(500).json({
+                    return res.status(500).json({
                         title: "Error while finding authenticated user",
                         err: err
                     });
                 }
                 if (!user) {
-                    res.status(500).json({
+                    return res.status(500).json({
                         title: "Can't find authenticated user",
                         err: err
                     });
