@@ -40,14 +40,12 @@
             <br>
             <!-- subgoals -->
             <div id="subgoals">
+                <input value="<%= goal.subgoals.length %>" id="subgoalNum" style="visibility: hidden;">
                 <% for (var i = 1; i <= goal.subgoals.length; i++){ %>
                     <div id="subgoal<%=i%>">
                         <h4>Subgoal <%=i%></h4>
                         <label for='subgoal-title<%=i%>'> title: </label>
                         <input type='text' name='subgoals' id='subgoal-title<%=i%>' value='<%=goal.subgoals[i-1].title%>' required><br>
-                        <label for='subgoal-consequence<%=i%>'> consequence: </label>
-                        <input type='text' name='subgoals' id='subgoal-consequence<%=i%>' value='<%=goal.subgoals[i-1].consequence%>'>
-                        <small> leave blank if no consequence </small>
                     </div>
                 <% }; %>
             </div>
@@ -65,10 +63,12 @@
 
 <script>
     $(document).ready(function(){
-        let subgoalCount = 0;
+        let subgoalCount = $("#subgoalNum").val();
 
         $("#del-subgoal").on("click", function () {
+            console.log("hello");
             if (subgoalCount > 0){
+                console.log("deleting subgoal #"+subgoalCount);
                 $("#subgoal" + subgoalCount).remove();
                 subgoalCount--;
             }
@@ -81,9 +81,6 @@
                     "<h4>Subgoal "+subgoalCount+"</h4>"+
                     "<label for='subgoal-title"+subgoalCount+"'> title: </label>"+
                     "<input type='text' name='subgoals' id='subgoal-title"+subgoalCount+"' required><br>"+
-                    "<label for='subgoal-consequence" + subgoalCount + "'> consequence: </label>" +
-                    "<input type='text' name='subgoals' id='subgoal-consequence" + subgoalCount + "'>" +
-                    "<small> leave blank if no consequence </small>"+
                 "</div>"
             );
         });

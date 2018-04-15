@@ -10,6 +10,8 @@ var session = require('express-session');
 var bcrypt = require("bcryptjs");
 mongoose.connect('mongodb://localhost:27017/goal');
 
+var config = require('config');
+
 var index = require('./routes/index');
 var auth = require('./routes/auth');
 var nado = require('./routes/nado');    // all authenticated routes
@@ -31,7 +33,7 @@ app.use(cookieParser());
 
 // Express Session
 app.use(session({
-  secret: '871904231hrkçqdc732yi1oeh23870eo2307u',
+  secret: config.authentication.secret,
   saveUninitialized: false,
   resave: true
 }));
