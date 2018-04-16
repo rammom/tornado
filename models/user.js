@@ -10,7 +10,8 @@ var UserSchema = new Schema({
     goals: [{type: ObjectId, ref: 'Goal', required: true}],
     friends: [{ type: ObjectId, ref: 'User', required: true}],
     requests: [{
-        user: { type: ObjectId, ref: 'User', required: true},
+        user: { type: ObjectId, ref: 'User', required: true },
+        goal: { type: ObjectId, ref: 'Goal', required: false },
         type: { type: String, required: true}    
     }],
     createdAt: {type: Date, required: false},

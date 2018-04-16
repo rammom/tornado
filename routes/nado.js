@@ -225,10 +225,9 @@ router.get('/share-goal/:GID', function(req, res, next){
                 err: err
             });
         }
-
         User.findOne({_id: req.session.user._id})
             .populate('friends')
-            .populate('requests.user')            
+            .populate('requests.user')        
             .exec(function(err, user){
                 if (err) {
                     res.status(404).json({

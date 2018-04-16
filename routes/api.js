@@ -422,4 +422,52 @@ router.post('/user/decline-friend-request', function(req, res, next){
     });
 });
 
+/** send a share request to another user */
+router.post('/goal/send-share-request/:GID', function(req, res, next){
+    User.findById(req.body.friendId, function (err, friend) {
+        if (err) {
+            return res.status(500).json({
+                title: "error while finding user",
+                err: err
+            });
+        }
+        if (!friend) {
+            return res.status(404).json({
+                title: "no user found"
+            });
+        }
+        var requestFound = false;
+        for (var i = 0; i < friend.requests.length; i++){
+            let request = friend.requests[i];
+            if (request.goal == req.params.GID){
+                requestFound = true;
+                return;
+            }
+        };
+        if (requestFound){
+            return res.status(500).json({
+                title: "request already sent!"
+            });
+        }
+
+        let request = {
+            user: req.session.user._id,
+            goal: req.params.GID,
+            type: "goal-share"
+        }
+        friend.requests.push(request);
+
+        friend.save(function(err){
+            if (err){
+                return res.status(500).json({
+                    title: "error while saving friend user",
+                    err: err
+                });
+            }
+            res.redirect("back")            
+        });
+
+    });
+});
+
 module.exports = router;

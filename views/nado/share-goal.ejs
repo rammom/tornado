@@ -21,30 +21,24 @@
             <h1><%= goal.title %> <% if (goal.private){%> (private) <%}%> </h1>
             <h5><%= goal.info %></h5>
             <br>
-            <h3>Who do you want to share this goal with?</h3>
-            <form action="/api/goal/share/<%=goal._id%>" method="POST">                
-                <% user.friends.forEach(function(friend){ %>
-                    <li class="list-group-item">
-                        <h5 style="display: inline;"><%= friend.firstname + " " + friend.lastname%></h5>
-                        <% if (!friend.sentRequest) {%>
-                            <form action="/api/user/send-share-request" method="POST">
-                                <input type="text" value="<%=friend._id%>" name="friendId" style="visibility: hidden; display: inline;">
-                                <button href="" class="btn btn-primary" style="float: right;">Send share request</button>
-                            </form>
-                        <%} else {%>
-                            <form action="/api/user/undo-share-request" method="POST">
-                                <input type="text" value="<%=friend._id%>" name="friendId" style="visibility: hidden; display: inline;">
-                                <button href="" class="btn btn-danger" style="float: right;">Undo share request</button>
-                            </form>
-                        <%}%>
-                    </li>
-                    <br>
-                <% }) %>
-
+            <h3>Who do you want to share this goal with?</h3>              
+            <% user.friends.forEach(function(friend){ %>
+                <li class="list-group-item">
+                    <h5 style="display: inline;"><%= friend.firstname + " " + friend.lastname%></h5>
+                    <% if (!friend.sentRequest) {%>
+                        <form action="/api/goal/send-share-request/<%= goal._id %>" method="POST">
+                            <input type="text" value="<%=friend._id%>" name="friendId" style="visibility: hidden; display: inline;">                                                             
+                            <button href="" class="btn btn-primary" style="float: right;">Send share request</button>
+                        </form>
+                    <%} else {%>
+                        <form action="/api/goal/undo-share-request/<%= goal._id %>" method="POST">
+                            <input type="text" value="<%=friend._id%>" name="friendId" style="visibility: hidden; display: inline;">                               
+                            <button href="" class="btn btn-danger" style="float: right;">Undo share request</button>
+                        </form>
+                    <%}%>
+                </li>
                 <br>
-                <br>
-                <button type="submit">Save Goal</button>
-            </form>
+            <% }) %>
         </div>
         
 
