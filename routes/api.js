@@ -36,7 +36,9 @@ router.post('/goal/add-new', function(req, res, next){
     else{
         let subgoals = [];        
         if (req.body.subgoals){
-            for (var i = 0; i < req.body.subgoals.length; i += 2) {
+            console.log("SUBGOALS:");
+            console.log(req.body.subgoals);
+            for (var i = 0; i < req.body.subgoals.length; i += 1) {
                 let s = {};
                 s.title = req.body.subgoals[i];
                 s.consequence = req.body.subgoals[i + 1];
@@ -108,7 +110,7 @@ router.post('/goal/edit/:GID', function(req, res, next){
     else {
         let subgoals = [];
         if (req.body.subgoals) {
-            for (var i = 0; i < req.body.subgoals.length; i += 2) {
+            for (var i = 0; i < req.body.subgoals.length; i += 1) {
                 let s = {};
                 s.title = req.body.subgoals[i];
                 s.consequence = req.body.subgoals[i + 1];
@@ -132,7 +134,7 @@ router.post('/goal/edit/:GID', function(req, res, next){
 
             goal.save(function (err, g) {
                 if (err) {
-                    res.status(500).json({
+                    return res.status(500).json({
                         title: "error while saving the goal",
                         err: err
                     });
@@ -467,6 +469,131 @@ router.post('/goal/send-share-request/:GID', function(req, res, next){
             res.redirect("back")            
         });
 
+    });
+});
+
+/** undo share request */
+router.post('/goal/undo-share-request/:GID', function(req, res, next){
+    User.findById(req.body.friendId, function(err, friend){
+        if (err) {
+            return res.status(500).json({
+                title: "error while finding user",
+                err: err
+            });
+        }
+        if (!friend) {
+            return res.status(404).json({
+                title: "no user found"
+            });
+        }
+        for (var i = 0; i < friend.requests.length; i++) {
+            if (friend.requests[i].type == 'goal-share' && friend.requests[i].goal == req.params.GID) {
+                friend.requests.splice(i);
+                break;
+            }
+        }
+        friend.save(function (err) {
+            if (err) {
+                return res.status(500).json({
+                    title: "error while saving user",
+                    err: err
+                });
+            }
+            res.redirect('back');
+        });
+    })
+});
+
+/** decline a share request */
+router.post('/goal/decline-share-request/:GID', function(req, res, next){
+    User.findById(req.session.user._id, function(err, user){
+        if (err) {
+            return res.status(500).json({
+                title: "error while finding user",
+                err: err
+            });
+        }
+        if (!user) {
+            return res.status(404).json({
+                title: "no user found"
+            });
+        }
+        for (var i = 0; i < user.requests.length; i++){
+            if (user.requests[i].type == 'goal-share' && user.requests[i].goal == req.params.GID){
+                user.requests.splice(i);
+                break;
+            }
+        }
+        user.save(function(err){
+            if (err){
+                return res.status(500).json({
+                    title: "error while saving user",
+                    err: err
+                });
+            }
+            res.redirect('back');
+        });
+    });
+});
+
+router.post('/goal/accept-share-request/:GID', function(req, res, next){
+    User.findById(req.session.user._id, function(err, user){
+        if (err) {
+            return res.status(500).json({
+                title: "error while finding user",
+                err: err
+            });
+        }
+        if (!user) {
+            return res.status(404).json({
+                title: "no user found"
+            });
+        }
+        // remove request
+        for (var i = 0; i < user.requests.length; i++) {
+            if (user.requests[i].type == 'goal-share' && user.requests[i].goal == req.params.GID) {
+                user.requests.splice(i);
+                break;
+            }
+        }
+        // add goal to user
+        user.goals.push(req.params.GID);
+        // save user
+        user.save(function(err){
+            if (err){
+                return res.status(500).json({
+                    title: "error while saving user",
+                    err: err
+                });
+            }
+            // add user to goal
+            Goal.findById(req.params.GID, function (err, goal) {
+                if (err) {
+                    return res.status(500).json({
+                        title: "error while finding goal",
+                        err: err
+                    });
+                }
+                if (!user) {
+                    return res.status(404).json({
+                        title: "no goal found"
+                    });
+                }
+                goal.users.push(req.session.user._id);
+                // save goal
+                goal.save(function(err){
+                    if (err) {
+                        return res.status(500).json({
+                            title: "error while saving goal",
+                            err: err
+                        });
+                    }
+                    req.session.user.goals.push(goal._id);
+                    res.redirect('back');
+                });
+            });
+        });
+        
     });
 });
 

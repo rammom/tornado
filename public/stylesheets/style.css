@@ -3,3 +3,46 @@
 	margin-right: 2vw!important;
 	margin-left: 2vw!important;
 }
+
+body {
+	background-color: #F8F8FF;
+}
+.dev_scribble_text{
+	font-family: 'Rock Salt', cursive;
+}
+
+.dev_center{
+	display: inline;
+	text-align: center;
+}
+
+label.dev_label_text{
+	font-size: 20px;
+	margin-bottom: 2vh;
+}
+input{
+	font-family: arial;
+}
+.dev_input_text{
+	max-width: 20vw!important;
+}
+
+.dev_big_button{
+	width: 20vw; 
+	font-size: 25px; 
+	margin-bottom: 5vh;
+	color: white;
+}
+
+.dev_med_button{
+	width: 17vw; 
+	font-size: 20px; 
+	margin-bottom: 2vh;
+	color: white;
+}
+.dev_sm_button{
+	width: 13vw; 
+	font-size: 14px; 
+	margin-bottom: 2vh;
+	color: white;
+}

@@ -1,16 +1,27 @@
 <!DOCTYPE html>
-<html>
+<html style="overflow: hidden;">
 	<head>
 		<title>Tornado</title>
 		<%- include('partials/imports')%>
 	</head>
-	<body>
+	<body class="dev_scribble_text">
 
-		<h1>TORNADO</h1>
-		<h3>Login / Register</h3>
+		<%- include('partials/header') %>
 
-		<a href="/auth/login"><button>Login</button></a>
-		<a href="/auth/register"><button>Register</button></a>		
+		<div class="row dev_contain">
+			<div class="col-12 dev_center">
+				<div class="align-middle">
+					<a href="/auth/login" class="btn btn-primary dev_big_button">Login</a>
+					<h3 style="text-align: center; margin-bottom: 5vh">OR</h3>
+					<a href="/auth/register" class="btn btn-primary dev_big_button">Register</a>		
+				</div>
+			</div>
+		</div>
+
 
 	</body>
 </html>
+
+<style>
+
+</style>

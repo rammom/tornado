@@ -7,12 +7,10 @@ var GoalSchema = new Schema({
     info: { type: String, required: true }, 
     subgoals: [{ 
         title: {type: String, required: true},
-        consequence: {type: String, required: false},
         usersCompleted: [{type: ObjectId, ref:'User', required: true}]
      }],
     users: [{ type: ObjectId, ref:'User', required: true }],
     private: { type: Boolean, required: true },
-    sharedWith: [{ type: ObjectId, ref: 'User', required: true }],
     archived: { type: Boolean, required: true },
     complete: { type: Boolean, required: true },       
     entry_fee: { type: Number, required: true },

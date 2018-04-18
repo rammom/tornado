@@ -134,6 +134,7 @@ router.get('/goal/:GID', function(req, res, next){
         });
         User.findOne({ _id: req.session.user._id })
             .populate('requests.user')
+            .populate('friends')
             .exec(function (err, user) {
                 if (err) {
                     res.status(500).json({

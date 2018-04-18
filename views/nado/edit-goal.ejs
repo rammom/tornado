@@ -9,53 +9,46 @@
     <body>
         <%- include('../partials/nav') %>
             
-        <% if(errors) {%>
-            <% errors.forEach(function(err){%>
-                <p style="color: red">***
-                    <%= err.msg %>
-                </p>
-            <%})%>
-        <% }%>
 
-        <h1>Edit your Goal</h1>
-        <form action="/api/goal/edit/<%=goal._id%>" method="POST">
-            <div>
-                <label for="title">Goal Title: </label>
-                <input type="text" name="title" id="title" value='<%=goal.title%>' required>
-            </div>
-            <div>
-                <label for="info">Goal Info: </label>
-                <textarea type="text" name="info" id="info" required><%=goal.info%></textarea>
-            </div>
-            <div>
-                <label for="private">Private: </label>
-                <input type="checkbox" name="private" id="private" <% if(goal.private) {%> checked <%}%>>
-            </div>
-            <!-- <div>
-                <label for="entry_fee">Entry fee: </label>
-                <input type="text" name="entry_fee" id="entry_fee" value=<%= goal.entry_fee %>
-                <small>leave blank if no fee</small>
-            </div> -->
-            <br>
-            <br>
-            <!-- subgoals -->
-            <div id="subgoals">
-                <input value="<%= goal.subgoals.length %>" id="subgoalNum" style="visibility: hidden;">
-                <% for (var i = 1; i <= goal.subgoals.length; i++){ %>
-                    <div id="subgoal<%=i%>">
-                        <h4>Subgoal <%=i%></h4>
-                        <label for='subgoal-title<%=i%>'> title: </label>
-                        <input type='text' name='subgoals' id='subgoal-title<%=i%>' value='<%=goal.subgoals[i-1].title%>' required><br>
+        <div class="row dev_contain dev_center">
+            <div class="col-12">
+                <% if(errors) {%>
+                    <% errors.forEach(function(err){%>
+                        <p style="color: red">***
+                            <%= err.msg %>
+                        </p>
+                    <%})%>
+                <% }%>
+        
+                <h1>Edit your Goal</h1>
+                <form action="/api/goal/edit/<%=goal._id%>" method="POST">
+                    <div >
+                        <label for="title" class="dev_label_text">Goal Title: </label><br>
+                        <input type="text" name="title" id="title" value='<%=goal.title%>' required>
                     </div>
-                <% }; %>
+                    <div>
+                        <label for="info" class="dev_label_text">Goal Info: </label><br>
+                        <textarea type="text" name="info" id="info" required><%=goal.info%></textarea>
+                    </div>
+                    <!-- subgoals -->
+                    <div id="subgoals">
+                        <input value="<%= goal.subgoals.length %>" id="subgoalNum" style="visibility: hidden;" class="dev_label_text"><br>
+                        <% for (var i = 1; i <= goal.subgoals.length; i++){ %>
+                            <div id="subgoal<%=i%>">
+                                <h4>Subgoal <%=i%></h4>
+                                <input type='text' name='subgoals' id='subgoal-title<%=i%>' value='<%=goal.subgoals[i-1].title%>' required><br>
+                            </div>
+                            <br>
+                        <% }; %>
+                    </div>
+        
+                    <button id="add-subgoal" type="button" class="btn btn-secondary dev_sm_button">Add subgoal</button>
+                    <button id="del-subgoal" type="button" class="btn btn-danger dev_sm_button">Delete subgoal</button>
+                    <br>
+                    <button type="submit" class="btn btn-primary dev_sm_button">Save Goal</button>
+                </form>
             </div>
-
-            <button id="add-subgoal" type="button">Add subgoal</button>
-            <button id="del-subgoal" type="button">Delete subgoal</button>
-            <br>
-            <br>
-            <button type="submit">Save Goal</button>
-        </form>
+        </div>
 
     </body>
 

@@ -14,7 +14,7 @@
                 <p style="color: red">***
                     <%= err.msg %>
                 </p>
-            <%})%>
+            <%});%>
         <% }%>
         
         <div class="container">
@@ -23,9 +23,18 @@
             <br>
             <h3>Who do you want to share this goal with?</h3>              
             <% user.friends.forEach(function(friend){ %>
+                <% for (var i = 0; i < goal.users.length; i++){%>
+                    <%if (goal.users[i].toString() == friend._id) return;%>
+                <%}%>
+                <% var requestSent = false; %>
+                <% friend.requests.forEach(function(request){ %>
+                    <% if (request.goal.toString() == goal._id){ %>
+                        <% requestSent = true; %>
+                    <% } %>
+                <% }); %>
                 <li class="list-group-item">
                     <h5 style="display: inline;"><%= friend.firstname + " " + friend.lastname%></h5>
-                    <% if (!friend.sentRequest) {%>
+                    <% if (!requestSent) {%>
                         <form action="/api/goal/send-share-request/<%= goal._id %>" method="POST">
                             <input type="text" value="<%=friend._id%>" name="friendId" style="visibility: hidden; display: inline;">                                                             
                             <button href="" class="btn btn-primary" style="float: right;">Send share request</button>

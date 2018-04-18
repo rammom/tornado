@@ -33,7 +33,7 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/login', function(req, res, next) {
-	res.render('auth/login');
+	res.render('auth/login', {errors: null});
 });
 
 router.get('/register', function (req, res, next) {
@@ -52,15 +52,13 @@ router.post('/login', function (req, res, next) {
 
 	User.findOne({ email: { $regex: new RegExp("^" + email, "i") }}, function(err, user){
 		if (err){
-			res.status(500).json({
+			return res.status(500).json({
 				title: "error finding user",
 				error: err
 			});
 		}
 		if (!user){
-			res.status(500).json({
-				title: "no user found"
-			});
+			return res.status(401).render("auth/login", { errors: [{ msg: "Invalid Credentials" }] });			
 		}
 		// if passwords match
 		if (bcrypt.compareSync(password, user.password)){
@@ -80,7 +78,7 @@ router.post('/login', function (req, res, next) {
 			res.status(200).redirect("/nado/dashboard");
 		}
 		else {
-			res.status(401).send("invalid username/password");
+			res.status(401).render("auth/login", {errors: [{msg: "Invalid Credentials"}]});
 		}
 	});
 
