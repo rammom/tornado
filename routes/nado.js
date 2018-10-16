@@ -259,6 +259,7 @@ router.get('/share-goal/:GID', function(req, res, next){
                         err: err
                     });
                 }
+                console.log(goal);
                 res.render('nado/share-goal', { user: user, goal: goal, errors: null });                
             });
 
