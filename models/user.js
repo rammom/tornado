@@ -16,8 +16,8 @@ var UserSchema = new Schema({
     }],
     createdAt: {type: Date, required: false},
     updatedAt: {type: Date, required: false},
-    addable: {type: Boolean, required: false},
-    sentRequest: { type: Boolean, required: false }
+    addable: {type: Boolean, required: false},          // very dumb code structure, this feild doesn't serve anything
+    sentRequest: { type: Boolean, required: false }        // ^^^
 });
 
 UserSchema.pre('save', function(next){

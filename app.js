@@ -2,11 +2,11 @@ var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser'); 
+var bodyParser = require('body-parser');      // parse incoming request bodies in a middleware before your handlers
 var mongoose = require('mongoose');
-var expressValidator = require('express-validator');
-var session = require('express-session');
+var expressValidator = require('express-validator');      // validate request input
+var session = require('express-session');         // creates session middleware
 var bcrypt = require("bcryptjs");
 mongoose.connect('mongodb://localhost:27017/goal');
 
@@ -33,7 +33,7 @@ app.use(cookieParser());
 
 // Express Session
 app.use(session({
-  secret: config.authentication.secret,
+  secret: config.authentication.secret,    
   saveUninitialized: false,
   resave: true
 }));

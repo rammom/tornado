@@ -1,3 +1,12 @@
+/**
+ * 
+ *      API
+ *      - CRUD goals and subgoals
+ *      - User operations (CRUD, add/remove friends)
+ *      - Sharing goals with other users
+ * 
+ */
+
 
 var express = require('express');
 var router = express.Router();
@@ -31,9 +40,11 @@ router.post('/goal/add-new', function(req, res, next){
     req.checkBody("info", "Your goal needs a description!").notEmpty();
     let errors = req.validationErrors();
     if (errors){
+        // send validation errors back to client
         res.render("nado/new-goal", {errors: errors});
     }
     else{
+        // collect subgoals from request
         let subgoals = [];        
         if (req.body.subgoals){
             console.log("SUBGOALS:");
@@ -48,6 +59,7 @@ router.post('/goal/add-new', function(req, res, next){
             console.log(subgoals);
         }
 
+        // create goal
         let goal = new Goal({
             title: title,
             info: info,
@@ -58,6 +70,7 @@ router.post('/goal/add-new', function(req, res, next){
             entry_fee: entry_fee,
             subgoals: subgoals
         });
+
         goal.save(function(err, g){
             if (err){
                 res.status(500).json({
@@ -66,6 +79,7 @@ router.post('/goal/add-new', function(req, res, next){
                 });
             }
             else {
+                // add new goal to current user
                 User.findById(req.session.user._id, function(err, user){
                     if (err){
                         res.status(500).json({
@@ -105,9 +119,11 @@ router.post('/goal/edit/:GID', function(req, res, next){
     req.checkBody("info", "Your goal needs a description!").notEmpty();
     let errors = req.validationErrors();
     if (errors) {
+        // send validation errors back to client
         res.render("nado/new-goal", { errors: errors });
     }
     else {
+        // collect subgoals from request
         let subgoals = [];
         if (req.body.subgoals) {
             for (var i = 0; i < req.body.subgoals.length; i += 1) {
@@ -126,6 +142,7 @@ router.post('/goal/edit/:GID', function(req, res, next){
                 });
             }
 
+            // replace old goal data with new
             goal.title = title;
             goal.info = info;
             goal.private = private;
@@ -166,6 +183,8 @@ router.post('/goal/subgoal/toggleCompletion', function(req, res, next){
         }
         console.log(req.body);
         var subgoalIndex = null;
+
+        // find corresponding subgoal
         for (var i = 0; i < goal.subgoals.length; i++){
             if (goal.subgoals[i]._id == req.body.subgoal){
                 subgoalIndex = i;
@@ -178,10 +197,11 @@ router.post('/goal/subgoal/toggleCompletion', function(req, res, next){
             });
         }
 
-
+        // if toggled to completed
         if (req.body.complete == 'true'){
             goal.subgoals[subgoalIndex].usersCompleted.push(req.session.user._id);
         }
+        // otherwise, remove user from usersCompleted
         else {
             let index = goal.subgoals[subgoalIndex].usersCompleted.indexOf(req.session.user._id);
             if (index != -1){
@@ -219,11 +239,14 @@ router.post('/user/remove-goal:UID', function(req, res, next){
                 });
             }
             var foundGoal = false;
-            for (var i = 0; i < user.goals.length; i++) {
-                if (user.goals[i]._id == req.params.UID) {
+            // look for corresponding goal
+            for (var i = 0; i < user.goals.length; i++) { 
+                if (user.goals[i]._id == req.params.UID) { 
                     foundGoal = true;
                     let goal = user.goals[i];
+                    // remove goal from list of goals
                     user.goals.splice(i, 1);
+                    // map list of goals back to _ids
                     user.goals = user.goals.map(function(a){return a._id});
                     user.save(function (err) {
                         if (err) {
@@ -233,6 +256,7 @@ router.post('/user/remove-goal:UID', function(req, res, next){
                             });
                         }
 
+                        // remove goal if no users are linked to it
                         if (goal.users.length == 1){
                             Goal.remove({_id: goal._id}, function(err){
                                 console.log("removing..");
@@ -246,7 +270,6 @@ router.post('/user/remove-goal:UID', function(req, res, next){
                         }
 
                         return res.redirect("/nado/dashboard");
-
                     });
                 }
             }
@@ -258,9 +281,11 @@ router.post('/user/remove-goal:UID', function(req, res, next){
 
 /** send a friend request to session user */
 router.post('/user/send-friend-request', function(req, res, next){
+    // check if already friends (UI should not allow for this)
     if (req.session.user.friends.indexOf(req.body.friendId) != -1){
         return res.send("Error: User already added!");
     }
+    // find friend by _id
     User.findById(req.body.friendId, function(err, friend){
         if (err){
             return res.status(500).json({
@@ -273,6 +298,7 @@ router.post('/user/send-friend-request', function(req, res, next){
                 title: "user not found"
             });
         }
+        // check if a request has already been sent (UI should not allow for this)
         friend.requests.forEach(function(request){
             if (request.user == req.session.user._id){
                 return res.status(500).json({
@@ -284,6 +310,7 @@ router.post('/user/send-friend-request', function(req, res, next){
             user: req.session.user._id,
             type: "friend"
         }
+        // 'send' the request
         friend.requests.push(newRequest);
         friend.save(function(err){
             if (err){
@@ -313,6 +340,7 @@ router.post('/user/undo-friend-request', function(req, res, next){
         }
         let index = 0;
         let userFound = false;
+        // find current user's request in friends list of requests
         friend.requests.forEach(function (request) {
             if (request.user == req.session.user._id) {
                 userFound = true;
@@ -325,6 +353,7 @@ router.post('/user/undo-friend-request', function(req, res, next){
                 title: "No friend request was previously sent!"
             });
         }
+        // remove current user's request
         friend.requests.splice(index, 1);
         friend.save(function(err){
             if (err){
@@ -353,6 +382,7 @@ router.post('/user/accept-friend-request', function(req, res, next){
                 title: "no user found"
             });
         }
+        // already friends (UI should not allow for this)
         if (friend.friends.indexOf(req.session.user._id) != -1){
             return res.status(500).json({
                 title: "Cannot befriend a user twice!"
@@ -365,7 +395,9 @@ router.post('/user/accept-friend-request', function(req, res, next){
                     err: err
                 });
             }
+            // add friend you current user's list of friends
             user.friends.push(friend._id);
+            // remove request from friend's list of requests
             for (var i = 0; i < user.requests.length; i++){
                 if (user.requests[i].user == req.body.friendId) {                
                     user.requests.splice(i);
@@ -380,6 +412,7 @@ router.post('/user/accept-friend-request', function(req, res, next){
                         err: err
                     });
                 }
+                // add current user to friend's list of friends
                 friend.friends.push(req.session.user._id);                
                 friend.save(function(err){
                     if (err){
@@ -405,6 +438,7 @@ router.post('/user/decline-friend-request', function(req, res, next){
                 err: err
             });
         }
+        // remove request
         for (var i = 0; i < user.requests.length; i++) {
             if (user.requests[i].user == req.body.friendId) {
                 user.requests.splice(i);
@@ -438,6 +472,7 @@ router.post('/goal/send-share-request/:GID', function(req, res, next){
                 title: "no user found"
             });
         }
+        // find share request
         var requestFound = false;
         for (var i = 0; i < friend.requests.length; i++){
             let request = friend.requests[i];
@@ -446,12 +481,14 @@ router.post('/goal/send-share-request/:GID', function(req, res, next){
                 return;
             }
         };
+        // can't send share request twice (UI should not allow for this)
         if (requestFound){
             return res.status(500).json({
                 title: "request already sent!"
             });
         }
 
+        // send new request
         let request = {
             user: req.session.user._id,
             goal: req.params.GID,
@@ -486,6 +523,8 @@ router.post('/goal/undo-share-request/:GID', function(req, res, next){
                 title: "no user found"
             });
         }
+
+        // find request and remove
         for (var i = 0; i < friend.requests.length; i++) {
             if (friend.requests[i].type == 'goal-share' && friend.requests[i].goal == req.params.GID) {
                 friend.requests.splice(i);
@@ -518,6 +557,8 @@ router.post('/goal/decline-share-request/:GID', function(req, res, next){
                 title: "no user found"
             });
         }
+
+        // find request and remove
         for (var i = 0; i < user.requests.length; i++){
             if (user.requests[i].type == 'goal-share' && user.requests[i].goal == req.params.GID){
                 user.requests.splice(i);
@@ -536,6 +577,7 @@ router.post('/goal/decline-share-request/:GID', function(req, res, next){
     });
 });
 
+// accept a share request
 router.post('/goal/accept-share-request/:GID', function(req, res, next){
     User.findById(req.session.user._id, function(err, user){
         if (err) {
@@ -549,7 +591,7 @@ router.post('/goal/accept-share-request/:GID', function(req, res, next){
                 title: "no user found"
             });
         }
-        // remove request
+        // find request and remove
         for (var i = 0; i < user.requests.length; i++) {
             if (user.requests[i].type == 'goal-share' && user.requests[i].goal == req.params.GID) {
                 user.requests.splice(i);
