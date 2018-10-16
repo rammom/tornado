@@ -14,7 +14,8 @@
                 <% users.forEach(function(user){%>
                     <% if (user.addable){ %>
                         <li class="list-group-item">
-                            <%= user.firstname + " " + user.lastname%>
+                            <%= user.firstname + " " + user.lastname%><br>
+                            <%= user.email %>
                             <% if (!user.sentRequest) {%>
                                 <form action="/api/user/send-friend-request" method="POST">
                                     <input type="text" value="<%=user._id%>" name="friendId" style="visibility: hidden;">
