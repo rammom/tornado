@@ -182,16 +182,16 @@ router.post('/goal/subgoal/toggleCompletion', function(req, res, next){
             });
         }
         console.log(req.body);
-        var subgoalIndex = null;
+        var subgoal_index = null;
 
         // find corresponding subgoal
         for (var i = 0; i < goal.subgoals.length; i++){
             if (goal.subgoals[i]._id == req.body.subgoal){
-                subgoalIndex = i;
+                subgoal_index = i;
                 break;
             }
         }
-        if (subgoalIndex == null){
+        if (subgoal_index == null){
             res.status(500).json({
                 title: "error while finding subgoal"
             });
@@ -199,13 +199,13 @@ router.post('/goal/subgoal/toggleCompletion', function(req, res, next){
 
         // if toggled to completed
         if (req.body.complete == 'true'){
-            goal.subgoals[subgoalIndex].usersCompleted.push(req.session.user._id);
+            goal.subgoals[subgoal_index].usersCompleted.push(req.session.user._id);
         }
         // otherwise, remove user from usersCompleted
         else {
-            let index = goal.subgoals[subgoalIndex].usersCompleted.indexOf(req.session.user._id);
+            let index = goal.subgoals[subgoal_index].usersCompleted.indexOf(req.session.user._id);
             if (index != -1){
-                goal.subgoals[subgoalIndex].usersCompleted.splice(index, 1);
+                goal.subgoals[subgoal_index].usersCompleted.splice(index, 1);
             }
         }
 
@@ -238,11 +238,11 @@ router.post('/user/remove-goal:UID', function(req, res, next){
                     err: err
                 });
             }
-            var foundGoal = false;
+            var found_goal = false;
             // look for corresponding goal
             for (var i = 0; i < user.goals.length; i++) { 
                 if (user.goals[i]._id == req.params.UID) { 
-                    foundGoal = true;
+                    found_goal = true;
                     let goal = user.goals[i];
                     // remove goal from list of goals
                     user.goals.splice(i, 1);
@@ -273,7 +273,7 @@ router.post('/user/remove-goal:UID', function(req, res, next){
                     });
                 }
             }
-            if (!foundGoal)
+            if (!found_goal)
                 return res.send('error, user has no element');
         });
 
@@ -306,12 +306,12 @@ router.post('/user/send-friend-request', function(req, res, next){
                 });
             }
         });
-        var newRequest = {
+        var new_request = {
             user: req.session.user._id,
             type: "friend"
         }
         // 'send' the request
-        friend.requests.push(newRequest);
+        friend.requests.push(new_request);
         friend.save(function(err){
             if (err){
                 return res.status(500).json({
@@ -339,16 +339,16 @@ router.post('/user/undo-friend-request', function(req, res, next){
             });
         }
         let index = 0;
-        let userFound = false;
+        let user_found = false;
         // find current user's request in friends list of requests
         friend.requests.forEach(function (request) {
             if (request.user == req.session.user._id) {
-                userFound = true;
+                user_found = true;
                 return;
             }
             index++;
         });
-        if (!userFound){
+        if (!user_found){
             return randomBytes.status(500).json({
                 title: "No friend request was previously sent!"
             });
@@ -473,16 +473,16 @@ router.post('/goal/send-share-request/:GID', function(req, res, next){
             });
         }
         // find share request
-        var requestFound = false;
+        var request_found = false;
         for (var i = 0; i < friend.requests.length; i++){
             let request = friend.requests[i];
             if (request.goal == req.params.GID){
-                requestFound = true;
+                request_found = true;
                 return;
             }
         };
         // can't send share request twice (UI should not allow for this)
-        if (requestFound){
+        if (request_found){
             return res.status(500).json({
                 title: "request already sent!"
             });

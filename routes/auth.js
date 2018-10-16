@@ -12,8 +12,6 @@ var router = express.Router();
 
 var expressValidator = require('express-validator');
 const bcrypt = require('bcryptjs');
-var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
 
 var User = require('../models/user');
 
@@ -117,15 +115,19 @@ router.post('/register', function(req, res, next) {
 	let password = req.body.password;
 	let password_verify = req.body.password_verify;
 
+
 	// validate data
 	req.checkBody("firstname", "Please tell us your first name").notEmpty();
 	req.checkBody("lastname", "Please tell us your first name").notEmpty();
 	req.checkBody("email", "Please provide us with an email").notEmpty();
-	/** check for valid email address here !!!!*/
-	//req.checkBody("email", "Not a valid email");
 	req.checkBody("password", "Please enter a password").notEmpty();
 	req.checkBody("password_verify", "Please verify your password").notEmpty();
 	req.checkBody("password", "Passwords don't match").equals(password_verify);
+	
+	// verify email
+	req.body.email_fits = /^[A-z0-9\.\_]+@[A-z0-9]+\.[A-z]+$/.test(req.body.email) ? "true": "";
+	req.checkBody("email_fits", "Please enter a valid email").notEmpty();
+	
 
 	let errors = req.validationErrors();
 	if (errors) {

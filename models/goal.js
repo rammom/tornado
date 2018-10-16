@@ -8,12 +8,12 @@ var GoalSchema = new Schema({
     subgoals: [{ 
         title: {type: String, required: true},
         usersCompleted: [{type: ObjectId, ref:'User', required: true}]
-     }],
+    }],
     users: [{ type: ObjectId, ref:'User', required: true }],
-    private: { type: Boolean, required: true },
+    private: { type: Boolean, required: true },        // inactive
     archived: { type: Boolean, required: true },
     complete: { type: Boolean, required: true },       
-    entry_fee: { type: Number, required: true },
+    entry_fee: { type: Number, required: true },        // inactive
     createdAt: { type: Date, requried: false},
     updatedAt: { type: Date, required: false}
 });

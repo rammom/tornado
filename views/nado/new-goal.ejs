@@ -8,47 +8,53 @@
 
     <body>
         <%- include('../partials/nav') %>
+
+        <div class="row dev_contain dev_center">
+            <div class="col-12">
+                <% if(errors) {%>
+                    <% errors.forEach(function(err){%>
+                        <p style="color: red">***
+                            <%= err.msg %>
+                        </p>
+                    <%})%>
+                <% }%>
+
+                <h1>Add a New Goal</h1>
+                <form action="/api/goal/add-new" method="POST">
+                    <div>
+                        <label for="title" class="dev_label_text">Goal Title: </label>
+                        <input type="text" name="title" id="title" required>
+                    </div>
+                    <div>
+                        <label for="info" class="dev_label_text">Goal Info: </label>
+                        <textarea type="text" name="info" id="info" required></textarea>
+                    </div>
+                    <div>
+                        <label for="private">Private: </label>
+                        <input type="checkbox" name="private" id="private">
+                    </div>
+                    <!-- <div>
+                                <label for="entry_fee">Entry fee: </label>
+                                <input type="text" name="entry_fee" id="entry_fee">
+                                <small>leave blank if no fee</small>
+                            </div> -->
+                    <br>
+                    <br>
+                    <!-- subgoals -->
+                    <div id="subgoals">
+                
+                    </div>
+                
+                    <button id="add-subgoal" type="button" class="btn btn-secondary dev_sm_button">Add subgoal</button>
+                    <button id="del-subgoal" type="button" class="btn btn-danger dev_sm_button">Delete subgoal</button>
+                    <br>
+                    <button type="submit" class="btn btn-primary dev_sm_button">Create Goal</button>
+                </form>
+        
+            </div>
+        </div>
             
-        <% if(errors) {%>
-            <% errors.forEach(function(err){%>
-                <p style="color: red">***
-                    <%= err.msg %>
-                </p>
-            <%})%>
-        <% }%>
-
-        <h1>Add a New Goal</h1>
-        <form action="/api/goal/add-new" method="POST">
-            <div>
-                <label for="title">Goal Title: </label>
-                <input type="text" name="title" id="title" required>
-            </div>
-            <div>
-                <label for="info">Goal Info: </label>
-                <textarea type="text" name="info" id="info" required></textarea>
-            </div>
-            <div>
-                <label for="private">Private: </label>
-                <input type="checkbox" name="private" id="private">
-            </div>
-            <!-- <div>
-                <label for="entry_fee">Entry fee: </label>
-                <input type="text" name="entry_fee" id="entry_fee">
-                <small>leave blank if no fee</small>
-            </div> -->
-            <br>
-            <br>
-            <!-- subgoals -->
-            <div id="subgoals">
-
-            </div>
-
-            <button id="add-subgoal" type="button">Add subgoal</button>
-            <button id="del-subgoal" type="button">Delete subgoal</button>            
-            <br>
-            <br>
-            <button type="submit">Create Goal</button>
-        </form>
+        
 
     </body>
 

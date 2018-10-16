@@ -49,10 +49,10 @@ router.get('/dashboard', function(req, res, next){
 
             console.log(req.query);
             let data = {user: user}
-            if (req.query.sentRequest)
-                data.ping = "Friend Request Sent!"
-            if (req.query.acceptedRequest)
-                data.ping = "Friend added!"
+            // if (req.query.sentRequest)
+            //     data.ping = "Friend Request Sent!"
+            // if (req.query.acceptedRequest)
+            //     data.ping = "Friend added!"
 
             res.render("nado/dashboard", data);
         });
